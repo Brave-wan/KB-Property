@@ -5,19 +5,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp">
 
         <TextView
             android:id="@+id/tv_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="24dp"
+            android:paddingLeft="24dp"
+            android:textColor="@android:color/black"
             tools:text="1-1"/>
-
-    </RelativeLayout>
-
 
 </LinearLayout>

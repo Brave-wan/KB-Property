@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageInstaller;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -84,98 +85,76 @@ public class MainActivity extends AppCompatActivity {
     private void initView() {
         buildListBeanList.clear();
         houseArrearsListBeanList.clear();
+        buildListBeanList.add(new BuildingListBean.DataBean.BuildListBean());
+        buildListBeanList.add(new BuildingListBean.DataBean.BuildListBean());
+        buildListBeanList.add(new BuildingListBean.DataBean.BuildListBean());
+        buildListBeanList.add(new BuildingListBean.DataBean.BuildListBean());
+        buildListBeanList.add(new BuildingListBean.DataBean.BuildListBean());
+        houseArrearsListBeanList.add(new HouseListBean.DataBean.HouseArrearsListBean());
+        houseArrearsListBeanList.add(new HouseListBean.DataBean.HouseArrearsListBean());
+        houseArrearsListBeanList.add(new HouseListBean.DataBean.HouseArrearsListBean());
+        houseArrearsListBeanList.add(new HouseListBean.DataBean.HouseArrearsListBean());
+        houseArrearsListBeanList.add(new HouseListBean.DataBean.HouseArrearsListBean());
+        houseArrearsListBeanList.add(new HouseListBean.DataBean.HouseArrearsListBean());
+        houseArrearsListBeanList.add(new HouseListBean.DataBean.HouseArrearsListBean());
+        houseArrearsListBeanList.add(new HouseListBean.DataBean.HouseArrearsListBean());
+        houseArrearsListBeanList.add(new HouseListBean.DataBean.HouseArrearsListBean());
 
-        present=new MainPresent(this);
-        recyclerViewBuilding.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewHouse.setLayoutManager(new LinearLayoutManager(this));
+        present = new MainPresent(this);
+
         initAdapter();
-        adapterBuild.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                getHouse(buildListBeanList.get(position).getBuildId());
-            }
-        });
 
-        adapterHouse.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                Intent intent = new Intent(MainActivity.this, LackDetailActivity.class);
-                intent.putExtra("houseId", houseArrearsListBeanList.get(position).getHouseId());
-                intent.putExtra("sessionid", sessionid);
-                startActivity(intent);
-            }
-        });
         present.getUserInfo();
     }
 
     private void initAdapter() {
+
         adapterBuild = new BaseQuickAdapter<BuildingListBean.DataBean.BuildListBean, BaseViewHolder>(R.layout.item_lack_list, buildListBeanList) {
             @Override
             protected void convert(BaseViewHolder helper, BuildingListBean.DataBean.BuildListBean item) {
-                TextView tv_name = helper.itemView.findViewById(R.id.tv_name);
-                tv_name.setText(item.getBuildName());
+                TextView textView = helper.itemView.findViewById(R.id.tv_name);
+                textView.setText("hello word");
+
             }
 
         };
         adapterHouse = new BaseQuickAdapter<HouseListBean.DataBean.HouseArrearsListBean, BaseViewHolder>(R.layout.item_lack_list, houseArrearsListBeanList) {
             @Override
             protected void convert(BaseViewHolder helper, HouseListBean.DataBean.HouseArrearsListBean item) {
-                TextView tv_name = helper.itemView.findViewById(R.id.tv_name);
-                tv_name.setText(item.getHouseName());
+                TextView textView = helper.itemView.findViewById(R.id.tv_name);
+                textView.setText("hello word");
             }
-
         };
+        recyclerViewBuilding.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewHouse.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewBuilding.setAdapter(adapterBuild);
         recyclerViewHouse.setAdapter(adapterHouse);
+
+        adapterBuild.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                startActivity(new Intent(MainActivity.this,ArrearsListActivity.class));
+            }
+        });
+
+        adapterHouse.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                startActivity(new Intent(MainActivity.this,ArrearsListActivity.class));
+
+            }
+        });
     }
-
-
-
-
-
-
-
-
 
     private List<BuildingListBean.DataBean.BuildListBean> buildListBeanList = new ArrayList<>();
-
-
-
     private List<HouseListBean.DataBean.HouseArrearsListBean> houseArrearsListBeanList = new ArrayList<>();
 
-    public void getHouse(String buildid) {
-        OkGo.post(UrlConfig.getBuilding() + "BuildingOwner/findArrearsByBuilding")
-                .headers("signature", "")
-                .params("buildingNo", buildid)
-                .params("PageInfoVo", CommonlyUtils.pageInfo(1))
-                .params("token", sessionid)
-                .execute(new StringDialogCallback(this, "正在获取房号中") {
-                    @Override
-                    public void onSuccess(String s, Call call, Response response) {
-                        try {
-                            Log.e("findArrearsByBuilding", s);
-                            HouseListBean sessionBean = GsonUtils.parseFromJson(s, HouseListBean.class);
-                            if (sessionBean != null && sessionBean.getData() != null && sessionBean.getData().getHouseArrearsList() != null) {
-                                houseArrearsListBeanList = sessionBean.getData().getHouseArrearsList();
-                                adapterHouse.setNewData(houseArrearsListBeanList);
-                            }
-                        } catch (Exception e) {
-                            Log.e("printStackTrace", "Exception: " + Log.getStackTraceString(e));
-                        }
-                    }
-
-                    @Override
-                    public void onError(Call call, Response response, Exception e) {
-                        super.onError(call, response, e);
-                    }
-                });
-    }
-
-
-
-    private String sessionid_first, loginName, loginPwd;
-
-
-
-
 }
+
+
+
+
+
+
+
+

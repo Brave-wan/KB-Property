@@ -34,6 +34,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activity.WelcomeActivity" />
+        <activity
+            android:name=".ui.ArrearsListActivity"
+            android:screenOrientation="landscape" />
         <activity android:name=".ui.activity.LackDetailActivity"></activity>
     </application>
 
