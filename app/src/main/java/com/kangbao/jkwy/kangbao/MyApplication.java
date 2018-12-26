@@ -25,10 +25,7 @@ public class MyApplication extends Application {
 
     private void initOkGo() {
         HttpParams params = new HttpParams();
-//        if ( !TextUtils.isEmpty(TOKEN) )
-//        {
-//            params.put("token", TOKEN);
-//        }
+
         try {
             //以下都不是必须的，根据需要自行选择,一般来说只需要 debug,缓存相关,cookie相关的 就可以了
             OkGo.getInstance()

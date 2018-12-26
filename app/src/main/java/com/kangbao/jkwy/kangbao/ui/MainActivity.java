@@ -37,6 +37,7 @@ import com.kangbao.jkwy.kangbao.util.NetWorksUtils;
 import com.kangbao.jkwy.kangbao.util.StringDialogCallback;
 import com.kangbao.jkwy.kangbao.util.ToastUtils;
 import com.kangbao.jkwy.kangbao.util.UrlConfig;
+import com.kangbao.jkwy.kangbao.view.IMainProjectView;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 
@@ -54,7 +55,7 @@ import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IMainProjectView {
 
     @BindView(R.id.tv_project)
     TextView tvProject;
@@ -100,10 +101,8 @@ public class MainActivity extends AppCompatActivity {
         houseArrearsListBeanList.add(new HouseListBean.DataBean.HouseArrearsListBean());
         houseArrearsListBeanList.add(new HouseListBean.DataBean.HouseArrearsListBean());
 
-        present = new MainPresent(this);
-
+        present = new MainPresent(this,this);
         initAdapter();
-
         present.getUserInfo();
     }
 
@@ -113,8 +112,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void convert(BaseViewHolder helper, BuildingListBean.DataBean.BuildListBean item) {
                 TextView textView = helper.itemView.findViewById(R.id.tv_name);
-                textView.setText("hello word");
-
+                textView.setText("三期-1栋");
             }
 
         };
@@ -122,25 +120,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void convert(BaseViewHolder helper, HouseListBean.DataBean.HouseArrearsListBean item) {
                 TextView textView = helper.itemView.findViewById(R.id.tv_name);
-                textView.setText("hello word");
+                textView.setText("01-01-01");
             }
         };
         recyclerViewBuilding.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewHouse.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewBuilding.setAdapter(adapterBuild);
         recyclerViewHouse.setAdapter(adapterHouse);
-
         adapterBuild.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                startActivity(new Intent(MainActivity.this,ArrearsListActivity.class));
+                startActivity(new Intent(MainActivity.this, ArrearsListActivity.class));
             }
         });
 
         adapterHouse.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                startActivity(new Intent(MainActivity.this,ArrearsListActivity.class));
+                startActivity(new Intent(MainActivity.this, ArrearsListActivity.class));
 
             }
         });
@@ -149,6 +146,10 @@ public class MainActivity extends AppCompatActivity {
     private List<BuildingListBean.DataBean.BuildListBean> buildListBeanList = new ArrayList<>();
     private List<HouseListBean.DataBean.HouseArrearsListBean> houseArrearsListBeanList = new ArrayList<>();
 
+    @Override
+    public void onProjectName(String name) {
+        tvProject.setText(name);
+    }
 }
 
 

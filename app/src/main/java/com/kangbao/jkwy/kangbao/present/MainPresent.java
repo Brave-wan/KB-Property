@@ -22,6 +22,7 @@ import com.kangbao.jkwy.kangbao.util.SharedPreferencesUtils;
 import com.kangbao.jkwy.kangbao.util.StringDialogCallback;
 import com.kangbao.jkwy.kangbao.util.ToastUtils;
 import com.kangbao.jkwy.kangbao.util.UrlConfig;
+import com.kangbao.jkwy.kangbao.view.IMainProjectView;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 
@@ -36,10 +37,11 @@ import okhttp3.Response;
 
 public class MainPresent {
     private Activity mContext;
-    private String projectId = "209", sessionid = "b8ec59b0ff6940d3b42eba145c20dd8c", projectName;
+    private IMainProjectView mView;
 
-    public MainPresent(Activity mContext) {
+    public MainPresent(Activity mContext, IMainProjectView mView) {
         this.mContext = mContext;
+        this.mView = mView;
     }
 
 
@@ -48,7 +50,7 @@ public class MainPresent {
                 .headers("signature", "")
                 .params("kbMac", "1510000100000597")
                 .params("PageInfoVo", CommonlyUtils.pageInfo(1))
-                .params("token", sessionid)
+                .params("token", AppKeyConfig.KB_SESSION_ID)
                 .execute(new StringDialogCallback(mContext, "正在获取用户信息中") {
                     @Override
                     public void onSuccess(String s, Call call, Response response) {
@@ -65,11 +67,8 @@ public class MainPresent {
                                             .put("user_project_name", kbUserBean.getProjectName())
                                             .put("user_name", kbUserBean.getLoginAcct())
                                             .put("user_pwd", kbUserBean.getPassWord());
+                                    mView.onProjectName(kbUserBean.getProjectName());
 
-                                    projectId = kbUserBean.getProjectId();
-                                    projectName = kbUserBean.getProjectName();
-
-//                                    tvProject.setText(projectName);
                                     login(sessionBean.getData().getKbUser().get(0).getLoginAcct(), sessionBean.getData().getKbUser().get(0).getPassWord());
                                 } else {
                                     ToastUtils.show(mContext, "暂无该用户信息");
@@ -177,7 +176,7 @@ public class MainPresent {
     private void getTokenData(String openid) {
         OkGo.post(UrlConfig.getBuilding() + "appController/getToken")
                 .params("openId", openid)
-                .params("projectId", projectId)
+                .params("projectId", SharedPreferencesUtils.init(mContext).getString("user_project_id"))
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(String s, Call call, Response response) {
@@ -185,9 +184,8 @@ public class MainPresent {
                             Log.e("getTokenData", s);
                             SessionBean sessionBean = GsonUtils.parseFromJson(s, SessionBean.class);
                             if (sessionBean != null && sessionBean.getData() != null) {
-                                sessionid = sessionBean.getData().getSessionId();
-                                AppKeyConfig.putBuildingKey(mContext, sessionid);
-                                getBuilding();
+                                AppKeyConfig.putBuildingKey(mContext, sessionBean.getData().getSessionId());
+                                getBuilding(sessionBean.getData().getSessionId());
                             }
                         } catch (Exception e) {
                             Log.e("printStackTrace", "Exception: " + Log.getStackTraceString(e));
@@ -202,10 +200,10 @@ public class MainPresent {
     }
 
 
-    public void getBuilding() {
+    public void getBuilding(String sessionid) {
         OkGo.post(UrlConfig.getBuilding() + "BuildingOwner/findBuildingList")
                 .headers("signature", "")
-                .params("projectId", projectId)//208 projectId
+                .params("projectId", SharedPreferencesUtils.init(mContext).getString("user_project_id"))//208 projectId
                 .params("PageInfoVo", CommonlyUtils.pageInfo(1))
                 .params("token", sessionid)
                 .execute(new StringDialogCallback(mContext, "正在楼栋信息中") {
@@ -217,7 +215,7 @@ public class MainPresent {
                             if (sessionBean != null && sessionBean.getData() != null && sessionBean.getData().getBuildList() != null) {
 //                                buildListBeanList = sessionBean.getData().getBuildList();
 //                                adapterBuild.setNewData(buildListBeanList);
-                                Log.i("okhttp","building:"+sessionBean.getData().getBuildList().size());
+                                Log.i("okhttp", "building:" + sessionBean.getData().getBuildList().size());
                             }
                         } catch (Exception e) {
                             Log.e("printStackTrace", "Exception: " + Log.getStackTraceString(e));
@@ -230,6 +228,7 @@ public class MainPresent {
                     }
                 });
     }
+
     public String createSign2(SortedMap<String, String> map) {
         String tokenCommonlyUtils;
         SortedMap<Object, Object> sortedMap = new TreeMap<>();

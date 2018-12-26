@@ -37,7 +37,7 @@
         <activity
             android:name=".ui.ArrearsListActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".ui.activity.LackDetailActivity"></activity>
+        <activity android:name=".ui.activity.LackDetailActivity"/>
     </application>
 
 </manifest>
