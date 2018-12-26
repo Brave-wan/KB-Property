@@ -79,6 +79,15 @@ public class BuildingListBean {
             private Object unitName;
             private String buildName;
             private String buildId;
+            private boolean isSelect;
+
+            public void setSelect(boolean select) {
+                isSelect = select;
+            }
+
+            public boolean isSelect() {
+                return isSelect;
+            }
 
             public long getId() {
                 return id;

@@ -9,6 +9,7 @@ import android.util.Log;
 import com.adtech.sys.util.Encrypt;
 import com.adtech.sys.util.MD5Util;
 import com.kangbao.jkwy.kangbao.bean.BuildingListBean;
+import com.kangbao.jkwy.kangbao.bean.HouseListBean;
 import com.kangbao.jkwy.kangbao.bean.LoginInfo;
 import com.kangbao.jkwy.kangbao.bean.LoginInfoBean;
 import com.kangbao.jkwy.kangbao.bean.OpenIdBean;
@@ -68,7 +69,6 @@ public class MainPresent {
                                             .put("user_name", kbUserBean.getLoginAcct())
                                             .put("user_pwd", kbUserBean.getPassWord());
                                     mView.onProjectName(kbUserBean.getProjectName());
-
                                     login(sessionBean.getData().getKbUser().get(0).getLoginAcct(), sessionBean.getData().getKbUser().get(0).getPassWord());
                                 } else {
                                     ToastUtils.show(mContext, "暂无该用户信息");
@@ -95,7 +95,6 @@ public class MainPresent {
                 .headers("signature", createSign2(map))
                 .params("userName", name)
                 .params("passWord", pwd)
-//                .params("phoneType", "")
                 .execute(new StringDialogCallback(mContext, "正在获取用户信息中") {
                     @Override
                     public void onSuccess(String s, Call call, Response response) {
@@ -201,21 +200,54 @@ public class MainPresent {
 
 
     public void getBuilding(String sessionid) {
+        SortedMap<String, String> map = new TreeMap<>();
+        map.put("projectId", SharedPreferencesUtils.init(mContext).getString("user_project_id"));
+        map.put("PageInfoVo", CommonlyUtils.pageInfo(1));
+        map.put("token", sessionid);
         OkGo.post(UrlConfig.getBuilding() + "BuildingOwner/findBuildingList")
-                .headers("signature", "")
-                .params("projectId", SharedPreferencesUtils.init(mContext).getString("user_project_id"))//208 projectId
-                .params("PageInfoVo", CommonlyUtils.pageInfo(1))
-                .params("token", sessionid)
+                .headers("signature", createSign(map))
+                .headers("uid", SharedPreferencesUtils.init(mContext).getString("user_id"))
+                .params(map)
                 .execute(new StringDialogCallback(mContext, "正在楼栋信息中") {
                     @Override
                     public void onSuccess(String s, Call call, Response response) {
                         try {
                             Log.e("findBuildingList", s);
-                            BuildingListBean sessionBean = GsonUtils.parseFromJson(s, BuildingListBean.class);
-                            if (sessionBean != null && sessionBean.getData() != null && sessionBean.getData().getBuildList() != null) {
-//                                buildListBeanList = sessionBean.getData().getBuildList();
-//                                adapterBuild.setNewData(buildListBeanList);
-                                Log.i("okhttp", "building:" + sessionBean.getData().getBuildList().size());
+                            BuildingListBean buildingListBean = GsonUtils.parseFromJson(s, BuildingListBean.class);
+                            if (buildingListBean != null && buildingListBean.getData() != null && buildingListBean.getData().getBuildList() != null) {
+                                mView.onBuildList(buildingListBean.getData().getBuildList());
+                                getFindOwnerByBuilding(buildingListBean.getData().getBuildList().get(0).getBuildId());
+                            }
+                        } catch (Exception e) {
+                            Log.e("printStackTrace", "Exception: " + Log.getStackTraceString(e));
+                        }
+                    }
+
+                    @Override
+                    public void onError(Call call, Response response, Exception e) {
+                        super.onError(call, response, e);
+                    }
+                });
+    }
+
+    public void getFindOwnerByBuilding(String buildingNo) {
+        SortedMap<String, String> map = new TreeMap<>();
+        map.put("projectId", SharedPreferencesUtils.init(mContext).getString("user_project_id"));
+        map.put("PageInfoVo", CommonlyUtils.pageInfo(1));
+        map.put("token", AppKeyConfig.getBuildingKey(mContext));
+        map.put("buildingNo", buildingNo);
+        OkGo.post(UrlConfig.getBuilding() + "BuildingOwner/findArrearsByBuilding")
+                .headers("signature", createSign(map))
+                .headers("uid", SharedPreferencesUtils.init(mContext).getString("user_id"))
+                .params(map)
+                .execute(new StringDialogCallback(mContext, "正在查询欠费房屋列表") {
+                    @Override
+                    public void onSuccess(String s, Call call, Response response) {
+                        try {
+                            Log.e("findBuildingList", s);
+                            HouseListBean houseListBean = GsonUtils.parseFromJson(s, HouseListBean.class);
+                            if (houseListBean != null && houseListBean.getData() != null && houseListBean.getData().getHouseArrearsList() != null) {
+                                mView.onHouseArrearsList(houseListBean.getData().getHouseArrearsList());
                             }
                         } catch (Exception e) {
                             Log.e("printStackTrace", "Exception: " + Log.getStackTraceString(e));

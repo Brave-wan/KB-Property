@@ -72,10 +72,10 @@
                     android:text="楼道选择" />
 
                 <android.support.v7.widget.RecyclerView
-                    android:layout_marginLeft="10dp"
                     android:id="@+id/recyclerView_building"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
                     android:layout_weight="1" />
             </LinearLayout>
 
@@ -88,17 +88,19 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
                     android:drawableLeft="@mipmap/rectangle_red"
                     android:drawablePadding="5dp"
                     android:text="房号选择" />
 
                 <android.support.v7.widget.RecyclerView
-                    android:layout_marginLeft="10dp"
                     android:id="@+id/recyclerView_house"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:background="@color/house_list_bg" />
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>

@@ -228,7 +228,7 @@
     <color name="ip_camera_pre">#353535</color>
     <color name="ip_color_accent">#1AAD19</color>
     <color name="ip_text_secondary_inverted">#66ffffff</color>
-    <color name="ip_text_primary_inverted">#ffffff</color>
+    <color name="ip_text_primary_inverted">#FFFFFF</color>
     <color name="color_blue">#32A4E9</color>
     <color name="self_checking_edit_frame">#cccccc</color>
 
@@ -237,4 +237,5 @@
     <color name="house_list_text_black">#333333</color>
     <color name="house_list_text_red">#D55C6A</color>
     <color name="house_list_item_text_red">#FF344D</color>
+    <color name="house_list_bg">#FAFAFA</color>
 </resources>

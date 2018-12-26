@@ -7,12 +7,14 @@
     android:paddingBottom="5dp">
 
     <TextView
+        android:id="@+id/tx_arrears_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="高层物业服务费"
         android:textColor="@color/house_list_text_black" />
 
     <TextView
+        android:id="@+id/tx_arrears_money"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"

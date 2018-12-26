@@ -24,10 +24,10 @@
         android:id="@+id/tx_item_total"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginRight="60dp"
         android:gravity="center|right"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
-        android:layout_marginRight="60dp"
         android:text="总计:￥2.00"
         android:textColor="@color/house_list_item_text_red"
         android:textStyle="bold" />
