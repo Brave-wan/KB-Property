@@ -28,7 +28,9 @@ public class AppKeyConfig {
     public static final String FRONT_REPORT_KEY_128 = "128";//前台报事
 
     public static final String KB_SESSION_ID = "b8ec59b0ff6940d3b42eba145c20dd8c";
-
+    public static boolean isTest = true;
+    public static final String directPay = isTest ? "https://api-development.tq-service.com/payment/api/" : "https://api.tq-service.com/payment/api/";
+    public static final String addRecordPay = isTest ? "http://dev.tq-service.com/property/base/" : "http://www.tq-service.com/property/base/";
 
     /**
      * 获取接房的key
