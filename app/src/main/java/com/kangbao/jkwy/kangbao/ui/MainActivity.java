@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements IMainProjectView 
     @Override
     public void onResume() {
         super.onResume();
+        present.getUserInfo();
     }
 
     @Override
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements IMainProjectView 
         initAdapter();
         present.getUserInfo();
     }
+
+
 
     private void initAdapter() {
         adapterBuild = new BaseQuickAdapter<BuildingListBean.DataBean.BuildListBean, BaseViewHolder>(R.layout.item_lack_list, buildListBeanList) {
