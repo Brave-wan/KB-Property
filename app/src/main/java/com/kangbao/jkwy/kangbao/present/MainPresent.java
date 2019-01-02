@@ -2,26 +2,28 @@ package com.kangbao.jkwy.kangbao.present;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.adtech.sys.util.Encrypt;
 import com.adtech.sys.util.MD5Util;
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.PhoneUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.kangbao.jkwy.kangbao.bean.BuildingListBean;
 import com.kangbao.jkwy.kangbao.bean.HouseListBean;
 import com.kangbao.jkwy.kangbao.bean.LoginInfo;
 import com.kangbao.jkwy.kangbao.bean.LoginInfoBean;
 import com.kangbao.jkwy.kangbao.bean.OpenIdBean;
 import com.kangbao.jkwy.kangbao.bean.SessionBean;
-import com.kangbao.jkwy.kangbao.ui.MainActivity;
 import com.kangbao.jkwy.kangbao.util.AppKeyConfig;
 import com.kangbao.jkwy.kangbao.util.CommonlyUtils;
 import com.kangbao.jkwy.kangbao.util.GsonUtils;
 import com.kangbao.jkwy.kangbao.util.NetWorksUtils;
 import com.kangbao.jkwy.kangbao.util.SharedPreferencesUtils;
 import com.kangbao.jkwy.kangbao.util.StringDialogCallback;
-import com.kangbao.jkwy.kangbao.util.ToastUtils;
 import com.kangbao.jkwy.kangbao.util.UrlConfig;
 import com.kangbao.jkwy.kangbao.view.IMainProjectView;
 import com.lzy.okgo.OkGo;
@@ -43,13 +45,18 @@ public class MainPresent {
     public MainPresent(Activity mContext, IMainProjectView mView) {
         this.mContext = mContext;
         this.mView = mView;
+        ToastUtils.showLong(PhoneUtils.getIMEI());
+        LogUtils.i("imei:" + PhoneUtils.getIMEI());
+        String androidId = Settings.Secure.getString(mContext.getContentResolver(), Build.SERIAL);
+        LogUtils.i("IMEI:"+android.os.Build.SERIAL);
+        // IMEI:6450649207ba4455
     }
 
 
     public void getUserInfo() {
         OkGo.post(UrlConfig.getAppUrl() + "Appinterface/getKbUserInfo")
                 .headers("signature", "")
-                .params("kbMac", "1510000100000597")
+                .params("kbMac", android.os.Build.SERIAL)
                 .params("PageInfoVo", CommonlyUtils.pageInfo(1))
                 .params("token", AppKeyConfig.KB_SESSION_ID)
                 .execute(new StringDialogCallback(mContext, "正在获取用户信息中") {
@@ -71,7 +78,7 @@ public class MainPresent {
                                     mView.onProjectName(kbUserBean.getProjectName());
                                     login(sessionBean.getData().getKbUser().get(0).getLoginAcct(), sessionBean.getData().getKbUser().get(0).getPassWord());
                                 } else {
-                                    ToastUtils.show(mContext, "暂无该用户信息");
+                                    ToastUtils.showShort("暂无该用户信息");
                                 }
                             }
                         } catch (Exception e) {
@@ -104,7 +111,7 @@ public class MainPresent {
                             if (sessionBean != null && sessionBean.getData() != null) {
                                 getAppOauth(sessionBean.getData().getSessionId());
                             } else {
-                                ToastUtils.show(mContext, "获取用户信息失败");
+                                ToastUtils.showShort("获取用户信息失败");
                             }
                         } catch (Exception e) {
                             Log.e("printStackTrace", "Exception: " + Log.getStackTraceString(e));
@@ -154,7 +161,7 @@ public class MainPresent {
                                 String openid = openIdBean.getData().getOpenId();
                                 getTokenData(openid);
                             } else {
-                                ToastUtils.show(mContext, "未获得授权");
+                                ToastUtils.showShort("未获得授权");
                             }
                         } catch (Exception e) {
                             Log.e("printStackTrace", "Exception: " + Log.getStackTraceString(e));
@@ -297,4 +304,6 @@ public class MainPresent {
         tokenCommonlyUtils = Encrypt.md5(loginName + Encrypt.md5(loginPwd) + "jkwycruise");
         return MD5Util.createSign(tokenCommonlyUtils, "UTF-8", sortedMap);
     }
+
+
 }

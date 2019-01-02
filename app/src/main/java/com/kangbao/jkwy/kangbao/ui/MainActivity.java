@@ -42,6 +42,10 @@ public class MainActivity extends AppCompatActivity implements IMainProjectView 
         present.getUserInfo();
     }
 
+    /**
+     *         am start -n com.kangbao.jkwy.kangbao/.ui.MainActivity
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

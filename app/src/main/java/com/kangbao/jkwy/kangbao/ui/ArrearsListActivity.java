@@ -3,12 +3,10 @@ package com.kangbao.jkwy.kangbao.ui;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;

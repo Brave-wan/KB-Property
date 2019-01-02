@@ -3,6 +3,7 @@ package com.kangbao.jkwy.kangbao;
 import android.app.Application;
 import android.text.TextUtils;
 
+import com.blankj.utilcode.util.Utils;
 import com.kangbao.jkwy.kangbao.util.UrlConfig;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
@@ -20,6 +21,7 @@ public class MyApplication extends Application {
         super.onCreate();
         UrlConfig.initURL(urlType, this);
         OkGo.init(this);
+        Utils.init(this);
         initOkGo();
     }
 
