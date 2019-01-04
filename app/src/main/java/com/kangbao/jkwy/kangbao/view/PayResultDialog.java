@@ -37,7 +37,7 @@ public class PayResultDialog extends Dialog {
         tx_pay_result = findViewById(R.id.tx_pay_result);
         tx_pay_result_btn = findViewById(R.id.tx_pay_result_btn);
         int res = payType ? R.mipmap.icon_pay_success : R.mipmap.icon_pay_fail;
-
+        setCanceledOnTouchOutside(false);
         drawableText(tx_pay_result, res);
         tx_pay_result.setText(payType ? "缴费成功" : "缴费未成功");
         tx_pay_result.setTextColor(context.getResources().getColor(payType ? R.color.house_list_text_black : R.color.house_list_text_red));
@@ -48,6 +48,7 @@ public class PayResultDialog extends Dialog {
             public void onClick(View v) {
                 if (listener != null) {
                     listener.onPayResultType(payType);
+                    dismiss();
                 }
             }
         });

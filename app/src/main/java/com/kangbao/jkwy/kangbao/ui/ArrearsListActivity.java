@@ -170,9 +170,6 @@ public class ArrearsListActivity extends Activity implements IArrearsListView, P
     public void onPayResultType(boolean result) {
         if (result) {
             finish();
-        } else {
-            if (resultDialog != null)
-                resultDialog.dismiss();
         }
 
     }

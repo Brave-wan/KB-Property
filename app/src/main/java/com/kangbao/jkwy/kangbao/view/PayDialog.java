@@ -47,6 +47,7 @@ public class PayDialog extends Dialog {
         image_pay_code.setImageBitmap(bitmap);
         tx_pay_type.setText(title);
         tx_money.setText("支付:"+money);
+        setCanceledOnTouchOutside(false);
 
         btn_pay_ok.setOnClickListener(new View.OnClickListener() {
             @Override
