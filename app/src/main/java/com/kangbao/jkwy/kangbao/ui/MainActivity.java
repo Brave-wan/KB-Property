@@ -43,7 +43,8 @@ public class MainActivity extends AppCompatActivity implements IMainProjectView 
     }
 
     /**
-     *         am start -n com.kangbao.jkwy.kangbao/.ui.MainActivity
+     * am start -n com.kangbao.jkwy.kangbao/.ui.MainActivity
+     *
      * @param savedInstanceState
      */
     @Override
@@ -59,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements IMainProjectView 
         initAdapter();
         present.getUserInfo();
     }
-
 
 
     private void initAdapter() {
@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements IMainProjectView 
                 Intent intent = new Intent(MainActivity.this, ArrearsListActivity.class);
                 intent.putExtra("houseId", bean.getHouseId());
                 intent.putExtra("projectName", tvProject.getText().toString().trim());
+                intent.putExtra("title", bean.getHouseName());
                 startActivity(intent);
             }
         });

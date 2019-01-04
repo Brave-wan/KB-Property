@@ -39,6 +39,8 @@ public class ArrearsListActivity extends Activity implements IArrearsListView, P
     TextView tx_arrears_phone;
     @BindView(R.id.tv_project)
     TextView tv_project;
+    @BindView(R.id.tx_arrears_title)
+    TextView tx_arrears_title;
 
     BaseQuickAdapter<ArrearsListBean.DataBean.DetailListBean, BaseViewHolder> adapter;
     List<String> list = new ArrayList<>();
@@ -54,6 +56,7 @@ public class ArrearsListActivity extends Activity implements IArrearsListView, P
         houseId = getIntent().getStringExtra("houseId");
         present = new ArrearsListPresent(this, this);
         tv_project.setText(getIntent().getStringExtra("projectName"));
+        tx_arrears_title.setText(getIntent().getStringExtra("title"));
         initView();
     }
 
