@@ -56,8 +56,8 @@ public class MainPresent {
     public void getUserInfo() {
         OkGo.post(UrlConfig.getAppUrl() + "Appinterface/getKbUserInfo")
                 .headers("signature", "")
-                .params("kbMac", android.os.Build.SERIAL)
-//                .params("kbMac", "1510000100000006")
+//                .params("kbMac", android.os.Build.SERIAL)
+                .params("kbMac", "1510000100000006")
                 .params("PageInfoVo", CommonlyUtils.pageInfo(1))
                 .params("token", AppKeyConfig.KB_SESSION_ID)
                 .execute(new StringDialogCallback(mContext, "正在获取用户信息中") {

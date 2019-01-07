@@ -22,7 +22,7 @@ public class URLUtil {
      */
     public static Map<String, String> getRegularURL1() {
         Map<String, String> stringMap = new HashMap<>();
-        stringMap.put("appUrl", "http://api.tq-service.com/oa/");
+        stringMap.put("appUrl", "http://oa.tq-service.com/");
         stringMap.put("equipmentUrl", "http://api.tq-service.com/dian/");
         stringMap.put("patrolUrl", "http://api.tq-service.com/dian/");
         stringMap.put("reportUrl", "http://api.tq-service.com/oa/");
