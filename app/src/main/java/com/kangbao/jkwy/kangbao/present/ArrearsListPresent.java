@@ -281,7 +281,7 @@ public class ArrearsListPresent {
                 .params("hyBillNo", hy_bill_no)
                 .params("projectId", projectId)
                 .cacheMode(CacheMode.DEFAULT.NO_CACHE)
-                .execute(new StringCallback() {
+                .execute(new StringDialogCallback(mContext, "加载中,请稍后...") {
                     @Override
                     public void onSuccess(String s, okhttp3.Call call, okhttp3.Response response) {
                         try {
