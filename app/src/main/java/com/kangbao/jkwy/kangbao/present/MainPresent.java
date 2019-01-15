@@ -48,7 +48,7 @@ public class MainPresent {
 //        ToastUtils.showLong(PhoneUtils.getIMEI());
         LogUtils.i("imei:" + PhoneUtils.getIMEI());
         String androidId = Settings.Secure.getString(mContext.getContentResolver(), Build.SERIAL);
-        LogUtils.i("IMEI:"+android.os.Build.SERIAL);
+        LogUtils.i("IMEI:" + android.os.Build.SERIAL);
         // IMEI:6450649207ba4455
     }
 
@@ -192,7 +192,9 @@ public class MainPresent {
                             SessionBean sessionBean = GsonUtils.parseFromJson(s, SessionBean.class);
                             if (sessionBean != null && sessionBean.getData() != null) {
                                 AppKeyConfig.putBuildingKey(mContext, sessionBean.getData().getSessionId());
-                                getBuilding(sessionBean.getData().getSessionId());
+
+                                mView.onTokenSuccess(sessionBean.getData().getSessionId());
+//                                getBuilding(sessionBean.getData().getSessionId(),1);
                             }
                         } catch (Exception e) {
                             Log.e("printStackTrace", "Exception: " + Log.getStackTraceString(e));
@@ -207,10 +209,11 @@ public class MainPresent {
     }
 
 
-    public void getBuilding(String sessionid) {
+    public void getBuilding(String sessionid, int page) {
+        LogUtils.i("加载楼栋次数");
         SortedMap<String, String> map = new TreeMap<>();
         map.put("projectId", SharedPreferencesUtils.init(mContext).getString("user_project_id"));
-        map.put("PageInfoVo", CommonlyUtils.pageInfo(1));
+        map.put("PageInfoVo", CommonlyUtils.pageInfo(page));
         map.put("token", sessionid);
         OkGo.post(UrlConfig.getBuilding() + "BuildingOwner/findBuildingList")
                 .headers("signature", createSign(map))
@@ -222,9 +225,12 @@ public class MainPresent {
                         try {
                             Log.e("findBuildingList", s);
                             BuildingListBean buildingListBean = GsonUtils.parseFromJson(s, BuildingListBean.class);
-                            if (buildingListBean != null && buildingListBean.getData() != null && buildingListBean.getData().getBuildList() != null) {
+                            if (buildingListBean != null && buildingListBean.getData() != null
+                                    && buildingListBean.getData().getBuildList() != null
+                                    && buildingListBean.getData().getBuildList().size() > 0) {
+
                                 mView.onBuildList(buildingListBean.getData().getBuildList());
-                                getFindOwnerByBuilding(buildingListBean.getData().getBuildList().get(0).getBuildId());
+                                getFindOwnerByBuilding(buildingListBean.getData().getBuildList().get(0).getBuildId(), 1);
                             }
                         } catch (Exception e) {
                             Log.e("printStackTrace", "Exception: " + Log.getStackTraceString(e));
@@ -238,10 +244,10 @@ public class MainPresent {
                 });
     }
 
-    public void getFindOwnerByBuilding(String buildingNo) {
+    public void getFindOwnerByBuilding(String buildingNo, int page) {
         SortedMap<String, String> map = new TreeMap<>();
         map.put("projectId", SharedPreferencesUtils.init(mContext).getString("user_project_id"));
-        map.put("PageInfoVo", CommonlyUtils.pageInfo(1));
+        map.put("PageInfoVo", CommonlyUtils.pageInfo(page, 12));
         map.put("token", AppKeyConfig.getBuildingKey(mContext));
         map.put("buildingNo", buildingNo);
         OkGo.post(UrlConfig.getBuilding() + "BuildingOwner/findArrearsByBuilding")

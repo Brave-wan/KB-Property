@@ -10,4 +10,6 @@ public interface IMainProjectView {
     void onBuildList(List<BuildingListBean.DataBean.BuildListBean> buildList);
 
     void onHouseArrearsList(List<HouseListBean.DataBean.HouseArrearsListBean> houseArrearsList);
+
+    void onTokenSuccess(String sessionId);
 }

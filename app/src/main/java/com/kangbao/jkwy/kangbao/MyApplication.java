@@ -1,6 +1,7 @@
 package com.kangbao.jkwy.kangbao;
 
 import android.app.Application;
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.blankj.utilcode.util.Utils;
@@ -10,6 +11,14 @@ import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.cookie.store.PersistentCookieStore;
 import com.lzy.okgo.model.HttpParams;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.DefaultRefreshFooterCreater;
+import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreater;
+import com.scwang.smartrefresh.layout.api.RefreshFooter;
+import com.scwang.smartrefresh.layout.api.RefreshHeader;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
+import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 
 import java.util.logging.Level;
 
@@ -25,6 +34,28 @@ public class MyApplication extends Application {
         initOkGo();
     }
 
+    static {
+        //设置全局的Header构建器
+        SmartRefreshLayout.setDefaultRefreshHeaderCreater(new DefaultRefreshHeaderCreater() {
+            @Override
+            public RefreshHeader createRefreshHeader(Context context, RefreshLayout layout) {
+                layout.setPrimaryColorsId(R.color.self_checking_edit_frame, android.R.color.black);//全局设置主题颜色
+                return new ClassicsHeader(context);//.setTimeFormat(new ("更新于 %s"));//指定为经典Header，默认是贝塞尔雷达Header
+            }
+        });
+
+        //设置全局的Footer构建器
+        SmartRefreshLayout.setDefaultRefreshFooterCreater(new DefaultRefreshFooterCreater() {
+            @Override
+            public RefreshFooter createRefreshFooter(Context context, RefreshLayout layout) {
+                //指定为经典Footer，默认是 BallPulseFooter
+                layout.setPrimaryColorsId(R.color.self_checking_edit_frame, android.R.color.black);//全局设置主题颜色
+                return new ClassicsFooter(context);
+            }
+        });
+    }
+
+
     private void initOkGo() {
         HttpParams params = new HttpParams();
 
@@ -35,7 +66,6 @@ public class MyApplication extends Application {
                     // 打开该调试开关,打印级别INFO,并不是异常,是为了显眼,不需要就不要加入该行
                     // 最后的true表示是否打印okgo的内部异常，一般打开方便调试错误
                     .debug("OkGo", Level.INFO, true)
-
                     //如果使用默认的 60秒,以下三行也不需要传
                     .setConnectTimeout(30000)  //全局的连接超时时间
                     .setReadTimeOut(OkGo.DEFAULT_MILLISECONDS)     //全局的读取超时时间

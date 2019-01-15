@@ -171,6 +171,5 @@ public class ArrearsListActivity extends Activity implements IArrearsListView, P
         if (result) {
             finish();
         }
-
     }
 }

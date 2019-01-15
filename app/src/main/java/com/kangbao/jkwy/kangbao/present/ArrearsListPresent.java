@@ -10,24 +10,29 @@ import android.util.Log;
 
 import com.adtech.sys.util.Encrypt;
 import com.adtech.sys.util.MD5Util;
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.kangbao.jkwy.kangbao.bean.ArrearsListBean;
 import com.kangbao.jkwy.kangbao.bean.BuildingListBean;
 import com.kangbao.jkwy.kangbao.bean.FeeInfoBean;
+import com.kangbao.jkwy.kangbao.bean.HousePayingBean;
 import com.kangbao.jkwy.kangbao.bean.HousingResult;
 import com.kangbao.jkwy.kangbao.bean.LackDetailBean;
+import com.kangbao.jkwy.kangbao.bean.OrderNoBean;
 import com.kangbao.jkwy.kangbao.bean.TwoCodePayBean;
 import com.kangbao.jkwy.kangbao.util.AppKeyConfig;
 import com.kangbao.jkwy.kangbao.util.CommonlyUtils;
 import com.kangbao.jkwy.kangbao.util.GsonUtils;
 import com.kangbao.jkwy.kangbao.util.SharedPreferencesUtils;
 import com.kangbao.jkwy.kangbao.util.StringDialogCallback;
-import com.kangbao.jkwy.kangbao.util.ToastUtils;
 import com.kangbao.jkwy.kangbao.util.UrlConfig;
 import com.kangbao.jkwy.kangbao.utils.ZXingUtils;
 import com.kangbao.jkwy.kangbao.view.IArrearsListView;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.StringCallback;
+
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -94,7 +99,7 @@ public class ArrearsListPresent {
 
         List<ArrearsListBean.DataBean.DetailListBean> list = model.getDetailList();
         if (TextUtils.isEmpty(payType)) {
-            ToastUtils.show(mContext, "请选择支付类型");
+            ToastUtils.showShort("请选择支付类型");
             return;
         }
         for (int j = 0; j < list.size(); j++) {
@@ -151,20 +156,25 @@ public class ArrearsListPresent {
                     public void onSuccess(String s, okhttp3.Call call, okhttp3.Response response) {
                         try {
                             Log.e("addRecordPay", s);
-                            HousingResult housingResult = GsonUtils.parseFromJson(s, HousingResult.class);
+                            JSONObject object = new JSONObject(s);
+                            if (object.getInt("errcode") != 200) {
+                                ToastUtils.showShort(object.getString("message"));
+                                return;
+                            }
+                            OrderNoBean housingResult = GsonUtils.parseFromJson(s, OrderNoBean.class);
                             if (housingResult != null && housingResult.getErrcode() == 200 && housingResult.getData() != null) {
-                                String tradeNo = (String) housingResult.getData();
+                                String tradeNo = housingResult.getData();
                                 if (TextUtils.isEmpty(tradeNo)) {
-                                    ToastUtils.show(mContext, "订单创建异常!");
+                                    ToastUtils.showShort("订单创建异常!");
                                     return;
                                 }
                                 String totalMoney = TextUtils.isEmpty(model.getTotal()) ? "" : model.getTotal();
                                 String projectId = TextUtils.isEmpty(model.getProjectId()) ? "" : model.getProjectId();
                                 String projectName = TextUtils.isEmpty(model.getProjectName()) ? "" : model.getProjectName();
                                 float money = Float.valueOf(totalMoney) * 100;
-                                directPay(payType, ((int) money) , projectId, projectName, tradeNo,totalMoney);
+                                directPay(payType, ((int) money), projectId, projectName, tradeNo, totalMoney);
                             } else {
-                                ToastUtils.show(mContext, "订单创建失败");
+                                ToastUtils.showShort("订单创建失败");
                             }
                         } catch (Exception e) {
                             Log.e("printStackTrace", "Exception: " + Log.getStackTraceString(e));
@@ -174,13 +184,13 @@ public class ArrearsListPresent {
                     @Override
                     public void onError(okhttp3.Call call, okhttp3.Response response, Exception e) {
                         super.onError(call, response, e);
-                        ToastUtils.show(mContext, "网络错误");
+                        ToastUtils.showShort("网络错误");
                     }
                 });
     }
 
 
-    private void directPay(String payType, final int money, String projectId, String projectName, String tradeNo,final String totalMoney) {
+    private void directPay(String payType, final int money, String projectId, String projectName, String tradeNo, final String totalMoney) {
 
         String channel;
         if (TextUtils.equals(payType, "1")) {
@@ -221,6 +231,11 @@ public class ArrearsListPresent {
                     public void onSuccess(String s, okhttp3.Call call, okhttp3.Response response) {
                         try {
                             Log.e("nativePay", s);
+                            JSONObject object = new JSONObject(s);
+                            if (object.getInt("code") != 200) {
+                                ToastUtils.showShort(object.getString("message"));
+                                return;
+                            }
                             TwoCodePayBean model = GsonUtils.parseFromJson(s, TwoCodePayBean.class);
                             if (model != null) {
                                 if (TextUtils.equals(model.getCode(), "200")) {
@@ -228,16 +243,16 @@ public class ArrearsListPresent {
                                         if (!TextUtils.isEmpty(model.getData().getCode_url())) {
                                             mView.OnCodeUrl(model.getData(), totalMoney);
                                         } else {
-                                            ToastUtils.show(mContext, "未获取到二维码链接");
+                                            ToastUtils.showShort("未获取到二维码链接");
                                         }
                                     } else {
-                                        ToastUtils.show(mContext, "未获取到二维码链接");
+                                        ToastUtils.showShort("未获取到二维码链接");
                                     }
                                 } else {
-                                    ToastUtils.show(mContext, "未获取到二维码链接");
+                                    ToastUtils.showShort("未获取到二维码链接");
                                 }
                             } else {
-                                ToastUtils.show(mContext, "未获取到二维码链接");
+                                ToastUtils.showShort("未获取到二维码链接");
                             }
                         } catch (Exception e) {
                             Log.e("printStackTrace", "Exception: " + Log.getStackTraceString(e));
@@ -248,7 +263,7 @@ public class ArrearsListPresent {
                     @Override
                     public void onError(okhttp3.Call call, okhttp3.Response response, Exception e) {
                         super.onError(call, response, e);
-                        ToastUtils.show(mContext, "网络错误");
+                        ToastUtils.showShort("网络错误");
                     }
                 });
     }
@@ -258,7 +273,7 @@ public class ArrearsListPresent {
      * @param out_trade_no
      * @param hy_bill_no
      * @param projectId
-     * @param houseId
+     * @param houseId      {"errcode":"200","errmsg":"操作成功","pageInfo":"{\"currentPage\":1,\"order\":\"asc\",\"pageSize\":20,\"total\":9,\"totalPage\":1}","data":{}}
      */
     public void queryOrder(String out_trade_no, String hy_bill_no, String projectId, final String houseId) {
         OkGo.post(AppKeyConfig.directPay + "Creditcard/queryOrder")
@@ -275,10 +290,10 @@ public class ArrearsListPresent {
                             if (model != null && TextUtils.equals(model.getCode(), "200")) {
                                 successPay(houseId);
                                 if (!TextUtils.isEmpty(model.getMessage())) {
-                                    ToastUtils.show(mContext, model.getMessage());
+                                    ToastUtils.showShort(model.getMessage());
                                 }
                             } else {
-                                ToastUtils.show(mContext, "支付失败");
+                                ToastUtils.showShort("支付失败");
                                 mView.onPayResult(false);
                             }
                         } catch (Exception e) {
@@ -289,12 +304,16 @@ public class ArrearsListPresent {
                     @Override
                     public void onError(okhttp3.Call call, okhttp3.Response response, Exception e) {
                         super.onError(call, response, e);
-                        ToastUtils.show(mContext, "网络错误");
+                        ToastUtils.showShort("网络错误");
                     }
                 });
     }
 
-
+    /**
+     * {"errcode":"200","errmsg":"操作成功","pageInfo":"{\"currentPage\":1,\"order\":\"asc\",\"pageSize\":1,\"total\":9,\"totalPage\":9}","data":{}}
+     *
+     * @param houseId
+     */
     private void successPay(String houseId) {
         SortedMap<String, String> map = new TreeMap<>();
         map.put("houseId", houseId);
@@ -309,12 +328,17 @@ public class ArrearsListPresent {
                     public void onSuccess(String s, okhttp3.Call call, okhttp3.Response response) {
                         try {
                             Log.e("housePaying", s);
-                            HousingResult model = GsonUtils.parseFromJson(s, HousingResult.class);
-                            if (model != null && model.getErrcode() == 200) {
-                                ToastUtils.show(mContext, "提交支付账单成功!");
+                            JSONObject object = new JSONObject(s);
+                            if (object.getString("errcode").equals(200)) {
+                                ToastUtils.showShort(object.getString("message"));
+                                return;
+                            }
+                            HousePayingBean model = GsonUtils.parseFromJson(s, HousePayingBean.class);
+                            if (model != null && model.getErrcode().equals("200")) {
+                                ToastUtils.showShort("提交支付账单成功!");
                                 mView.onPayResult(true);
                             } else {
-                                ToastUtils.show(mContext, "提交支付账单失败!");
+                                ToastUtils.showShort("提交支付账单失败!");
                                 mView.onPayResult(false);
                             }
                         } catch (Exception e) {
@@ -325,7 +349,7 @@ public class ArrearsListPresent {
                     @Override
                     public void onError(okhttp3.Call call, okhttp3.Response response, Exception e) {
                         super.onError(call, response, e);
-                        ToastUtils.show(mContext, "网络错误,请重试!");
+                        ToastUtils.showShort("网络错误,请重试!");
                     }
                 });
     }

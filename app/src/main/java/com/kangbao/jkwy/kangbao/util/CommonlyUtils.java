@@ -68,10 +68,17 @@ public class CommonlyUtils {
         PageInfo info = new PageInfo();
         info.setCurrentPage(page);
         info.setOrder("asc");
-        info.setPageSize(999);
+        info.setPageSize(20);
         String pageStr = new Gson().toJson(info);
         return pageStr;
     }
-
+    public static String pageInfo(int page,int pageSize) {
+        PageInfo info = new PageInfo();
+        info.setCurrentPage(page);
+        info.setOrder("asc");
+        info.setPageSize(pageSize);
+        String pageStr = new Gson().toJson(info);
+        return pageStr;
+    }
 
 }
