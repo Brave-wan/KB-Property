@@ -4,37 +4,63 @@ public class LackDetailBean {
 
 
     /**
-     * data : ok
-     * code : 200
-     * message : 刷卡支付成功
+     * data : {"tradeNo":"jkwy20190403174938699"}
+     * pageInfo : {"currentPage":0,"order":"asc","pageSize":20,"total":0,"totalPage":0}
+     * errmsg : 成功
+     * errcode : 1
      */
 
-    private String data;
-    private String code;
-    private String message;
+    private DataBean data;
+    private String pageInfo;
+    private String errmsg;
+    private String errcode;
 
-    public String getData() {
+    public DataBean getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(DataBean data) {
         this.data = data;
     }
 
-    public String getCode() {
-        return code;
+    public String getPageInfo() {
+        return pageInfo;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setPageInfo(String pageInfo) {
+        this.pageInfo = pageInfo;
     }
 
-    public String getMessage() {
-        return message;
+    public String getErrmsg() {
+        return errmsg;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setErrmsg(String errmsg) {
+        this.errmsg = errmsg;
+    }
+
+    public String getErrcode() {
+        return errcode;
+    }
+
+    public void setErrcode(String errcode) {
+        this.errcode = errcode;
+    }
+
+    public static class DataBean {
+        /**
+         * tradeNo : jkwy20190403174938699
+         */
+
+        private String tradeNo;
+
+        public String getTradeNo() {
+            return tradeNo;
+        }
+
+        public void setTradeNo(String tradeNo) {
+            this.tradeNo = tradeNo;
+        }
     }
 }
 

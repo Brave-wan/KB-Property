@@ -13,6 +13,15 @@
         android:layout_height="wrap_content"
         android:background="@drawable/top_bg">
 
+        <ImageView
+            android:id="@+id/img_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:padding="5dp"
+            android:src="@mipmap/icon_back" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -69,11 +78,11 @@
                     android:layout_margin="10dp"
                     android:drawableLeft="@mipmap/rectangle_red"
                     android:drawablePadding="5dp"
-                    android:text="楼道选择" />
+                    android:text="楼栋选择" />
 
                 <com.scwang.smartrefresh.layout.SmartRefreshLayout
-                    android:layout_width="match_parent"
                     android:id="@+id/smart_lou"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <android.support.v7.widget.RecyclerView
@@ -102,8 +111,8 @@
                     android:text="房号选择" />
 
                 <com.scwang.smartrefresh.layout.SmartRefreshLayout
-                    android:layout_width="match_parent"
                     android:id="@+id/smart_house"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <android.support.v7.widget.RecyclerView

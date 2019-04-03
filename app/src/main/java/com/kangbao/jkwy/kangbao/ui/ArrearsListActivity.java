@@ -104,7 +104,7 @@ public class ArrearsListActivity extends Activity implements IArrearsListView, P
             case R.id.img_arrears_ali_pay:
                 payType = "2";
                 if (dataBean != null)
-                    present.addRecordPre(payType, dataBean);
+                    present.addRecordYu(payType, dataBean);
                 break;
 
             case R.id.img_arrears_back:

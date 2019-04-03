@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.LogUtils;
@@ -41,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements IMainProjectView 
     SmartRefreshLayout smart_house;
     @BindView(R.id.smart_lou)
     SmartRefreshLayout smart_lou;
+    @BindView(R.id.img_back)
+    ImageView img_back;
 
     private BaseQuickAdapter<BuildingListBean.DataBean.BuildListBean, BaseViewHolder> adapterBuild;
     private BaseQuickAdapter<HouseListBean.DataBean.HouseArrearsListBean, BaseViewHolder> adapterHouse;
@@ -69,6 +72,12 @@ public class MainActivity extends AppCompatActivity implements IMainProjectView 
 
     private void initView() {
         present = new MainPresent(this, this);
+        img_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         initAdapter();
     }
 

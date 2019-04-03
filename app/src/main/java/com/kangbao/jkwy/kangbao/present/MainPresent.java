@@ -46,9 +46,9 @@ public class MainPresent {
         this.mContext = mContext;
         this.mView = mView;
 //        ToastUtils.showLong(PhoneUtils.getIMEI());
-        LogUtils.i("imei:" + PhoneUtils.getIMEI());
-        String androidId = Settings.Secure.getString(mContext.getContentResolver(), Build.SERIAL);
-        LogUtils.i("IMEI:" + android.os.Build.SERIAL);
+//        LogUtils.i("imei:" + PhoneUtils.getIMEI());
+//        String androidId = Settings.Secure.getString(mContext.getContentResolver(), Build.SERIAL);
+//        LogUtils.i("IMEI:" + android.os.Build.SERIAL);
         // IMEI:6450649207ba4455
     }
 
@@ -56,9 +56,9 @@ public class MainPresent {
     public void getUserInfo() {
         OkGo.post(UrlConfig.getAppUrl() + "Appinterface/getKbUserInfo")
                 .headers("signature", "")
-                .params("kbMac", android.os.Build.SERIAL)
-//                .params("kbMac", "1510000100000006")
-                .params("PageInfoVo", CommonlyUtils.pageInfo(1))
+//                .params("kbMac", android.os.Build.SERIAL)
+                .params("kbMac", "1510000100000006")
+////                .params("PageInfoVo", CommonlyUtils.pageInfo(1))
                 .params("token", AppKeyConfig.KB_SESSION_ID)
                 .execute(new StringDialogCallback(mContext, "正在获取用户信息中") {
                     @Override
@@ -275,6 +275,11 @@ public class MainPresent {
                 });
     }
 
+    /**
+     *
+     * @param map
+     * @return
+     */
     public String createSign2(SortedMap<String, String> map) {
         String tokenCommonlyUtils;
         SortedMap<Object, Object> sortedMap = new TreeMap<>();

@@ -85,14 +85,14 @@ public class URLUtil {
     public static Map<String, String> getNativeURL() {
         //包强
         Map<String, String> stringMap = new HashMap<>();
-        stringMap.put("appUrl", "http://10.15.208.115:8080/Cruiselch4/");//所有的基础信息
-        stringMap.put("equipmentUrl", "http://10.15.208.115:8089/DeviceMvn/");//设备巡检
-        stringMap.put("patrolUrl", "http://10.15.208.115:8080/tqPatrol/");//巡更
-        stringMap.put("reportUrl", "http://10.15.208.115:8089/CruMaven/");//配置巡检/工单池
-        stringMap.put("handoverRoomUrl", "http://10.15.208.115:8080/device/");//接房
-        stringMap.put("housing", "http://10.15.208.115:8080/house/");
-        stringMap.put("Cruiselch", "http://10.15.208.115:8089/Cruiselch/");//回访
-        stringMap.put("building", "http://10.15.208.115:8089/building/");//通知公告
+        stringMap.put("appUrl", "http://10.15.208.142:8080/Cruiselch4/");//所有的基础信息
+        stringMap.put("equipmentUrl", "http://10.15.142.115:8089/DeviceMvn/");//设备巡检
+        stringMap.put("patrolUrl", "http://10.15.208.142:8080/tqPatrol/");//巡更
+        stringMap.put("reportUrl", "http://10.15.208.142:8089/CruMaven/");//配置巡检/工单池
+        stringMap.put("handoverRoomUrl", "http://10.15.208.142:8080/device/");//接房
+        stringMap.put("housing", "http://10.15.208.142:8080/house/");
+        stringMap.put("Cruiselch", "http://10.15.208.142:8089/Cruiselch/");//回访
+        stringMap.put("building", "http://10.15.208.142:8089/building/");//通知公告
         return stringMap;
     }
 
@@ -110,7 +110,7 @@ public class URLUtil {
 //        return stringMap;
 //    }
 
-//
+    //
     public static Map<String, String> getNewService() {
         Map<String, String> stringMap = new HashMap<>();
         stringMap.put("appUrl", "http://api-development.tq-service.com/cruise/");//大管家基础数据

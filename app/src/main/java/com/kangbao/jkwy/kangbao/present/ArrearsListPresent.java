@@ -19,6 +19,7 @@ import com.kangbao.jkwy.kangbao.bean.HousePayingBean;
 import com.kangbao.jkwy.kangbao.bean.HousingResult;
 import com.kangbao.jkwy.kangbao.bean.LackDetailBean;
 import com.kangbao.jkwy.kangbao.bean.OrderNoBean;
+import com.kangbao.jkwy.kangbao.bean.PrestoredBean;
 import com.kangbao.jkwy.kangbao.bean.TwoCodePayBean;
 import com.kangbao.jkwy.kangbao.util.AppKeyConfig;
 import com.kangbao.jkwy.kangbao.util.CommonlyUtils;
@@ -91,6 +92,7 @@ public class ArrearsListPresent {
 
     private List<FeeInfoBean> feeInfoBeanList = new ArrayList<>();
 
+
     /**
      * @param payType 1,WX_NATIVE,ALI_QRCODE
      * @param model
@@ -122,48 +124,47 @@ public class ArrearsListPresent {
             }
         }
         String feeInfo = GsonUtils.parseToJsons(feeInfoBeanList);
-        //UrlConfig.getProperty()
-        //(projectName,totalAmount,thisAmount,chargeId,month)
-        //http://dev.tq-service.com/property/base/Api/addRecordPay
         Random random = new Random();
+        SortedMap<String, String> map = new TreeMap<>();
 
-        OkGo.post(AppKeyConfig.addRecordPay + "Api/addRecordPay")
-                .params("orderNum", "jkwy" + getDateToString(System.currentTimeMillis()) + random.nextInt(1000))
-                .params("ucId", "111")
-                .params("openid", "111")
-                .params("reName", TextUtils.isEmpty(model.getOwnerName()) ? "" : model.getOwnerName())
-                .params("rePhone", TextUtils.isEmpty(model.getOwnerPhone()) ? "" : model.getOwnerPhone())
-                .params("ownerName", TextUtils.isEmpty(model.getOwnerName()) ? "" : model.getOwnerName())
-                .params("ownerPhone", TextUtils.isEmpty(model.getOwnerPhone()) ? "" : model.getOwnerPhone())
-                .params("houseType", TextUtils.isEmpty(model.getHouseType()) ? "" : model.getHouseType())
-                .params("houseId", TextUtils.isEmpty(model.getHouseId()) ? "" : model.getHouseId())
-                .params("houseNo", TextUtils.isEmpty(model.getHouseNo()) ? "" : model.getHouseNo())
-                .params("projectId", TextUtils.isEmpty(model.getProjectId()) ? "" : model.getProjectId())
-                .params("projectName", TextUtils.isEmpty(model.getProjectName()) ? "" : model.getProjectName())
-                .params("address", TextUtils.isEmpty(model.getAdress()) ? "" : model.getAdress())
-                .params("buildId", TextUtils.isEmpty(model.getBuildId()) ? "" : model.getBuildId())
-                .params("buildName", TextUtils.isEmpty(model.getBuildName()) ? "" : model.getBuildName())
-                .params("company", TextUtils.isEmpty(model.getCompany()) ? "" : model.getCompany())
-                .params("totalMoney", TextUtils.isEmpty(model.getTotal()) ? "" : model.getTotal())
-                .params("payType", payType)
-                .params("operateTel", SharedPreferencesUtils.init(mContext).getString("user_name"))
-                .params("operateName", SharedPreferencesUtils.init(mContext).getString("user_nick_name"))
-                .params("feeInfo", feeInfo)
-                .cacheKey("addRecordPay")
-                .cacheMode(CacheMode.DEFAULT.NO_CACHE)
+        map.put("orderNum", "jkwy" + getDateToString(System.currentTimeMillis()) + random.nextInt(1000));
+        map.put("ucId", "");
+        map.put("openid", "");
+        map.put("reName", TextUtils.isEmpty(model.getOwnerName()) ? "" : model.getOwnerName());
+        map.put("rePhone", TextUtils.isEmpty(model.getOwnerPhone()) ? "" : model.getOwnerPhone());
+        map.put("ownerName", TextUtils.isEmpty(model.getOwnerName()) ? "" : model.getOwnerName());
+        map.put("ownerPhone", TextUtils.isEmpty(model.getOwnerPhone()) ? "" : model.getOwnerPhone());
+        map.put("houseType", TextUtils.isEmpty(model.getHouseType()) ? "" : model.getHouseType());
+        map.put("houseId", TextUtils.isEmpty(model.getHouseId()) ? "" : model.getHouseId());
+        map.put("houseNo", TextUtils.isEmpty(model.getHouseNo()) ? "" : model.getHouseNo());
+        map.put("projectId", TextUtils.isEmpty(model.getProjectId()) ? "" : model.getProjectId());
+        map.put("projectName", TextUtils.isEmpty(model.getProjectName()) ? "" : model.getProjectName());
+        map.put("address", TextUtils.isEmpty(model.getAdress()) ? "" : model.getAdress());
+        map.put("buildId", TextUtils.isEmpty(model.getBuildId()) ? "" : model.getBuildId());
+        map.put("buildName", TextUtils.isEmpty(model.getBuildName()) ? "" : model.getBuildName());
+        map.put("company", TextUtils.isEmpty(model.getCompany()) ? "" : model.getCompany());
+        map.put("totalMoney", TextUtils.isEmpty(model.getTotal()) ? "" : model.getTotal());
+        map.put("payType", payType);
+        map.put("operateTel", SharedPreferencesUtils.init(mContext).getString("user_name"));
+        map.put("operateName", SharedPreferencesUtils.init(mContext).getString("user_nick_name"));
+        map.put("feeInfo", feeInfo);
+//AppKeyConfig.addRecordPay + "Api/addRecordPay"
+        //  UrlConfig.getBuilding() + "appController/addRecordPay"
+        OkGo.post(UrlConfig.getBuilding() + "appController/addRecordPay")
+                .params(map)
                 .execute(new StringDialogCallback(mContext, "正在创建订单") {
                     @Override
                     public void onSuccess(String s, okhttp3.Call call, okhttp3.Response response) {
                         try {
                             Log.e("addRecordPay", s);
                             JSONObject object = new JSONObject(s);
-                            if (object.getInt("errcode") != 200) {
+                            if (!object.getString("errcode").equals("1")) {
                                 ToastUtils.showShort(object.getString("message"));
                                 return;
                             }
                             OrderNoBean housingResult = GsonUtils.parseFromJson(s, OrderNoBean.class);
-                            if (housingResult != null && housingResult.getErrcode() == 200 && housingResult.getData() != null) {
-                                String tradeNo = housingResult.getData();
+                            if (housingResult != null && housingResult.getErrcode().equals("1") && housingResult.getData() != null) {
+                                String tradeNo = housingResult.getData().getTradeNo();
                                 if (TextUtils.isEmpty(tradeNo)) {
                                     ToastUtils.showShort("订单创建异常!");
                                     return;
@@ -171,8 +172,108 @@ public class ArrearsListPresent {
                                 String totalMoney = TextUtils.isEmpty(model.getTotal()) ? "" : model.getTotal();
                                 String projectId = TextUtils.isEmpty(model.getProjectId()) ? "" : model.getProjectId();
                                 String projectName = TextUtils.isEmpty(model.getProjectName()) ? "" : model.getProjectName();
-                                float money = Float.valueOf(totalMoney) * 100;
-                                directPay(payType, ((int) money), projectId, projectName, tradeNo, totalMoney);
+                                float money = Float.valueOf(totalMoney);
+                                directPay(payType, money + "", projectId, projectName, tradeNo, totalMoney, "1");
+                            } else {
+                                ToastUtils.showShort("订单创建失败");
+                            }
+                        } catch (Exception e) {
+                            Log.e("printStackTrace", "Exception: " + Log.getStackTraceString(e));
+                        }
+                    }
+
+                    @Override
+                    public void onError(okhttp3.Call call, okhttp3.Response response, Exception e) {
+                        super.onError(call, response, e);
+                        ToastUtils.showShort("网络错误");
+                    }
+                });
+    }
+
+    /**
+     * 缴费预存
+     *
+     * @param payType 1,WX_NATIVE,ALI_QRCODE
+     * @param model
+     */
+    public void addRecordYu(final String payType, final ArrearsListBean.DataBean model) {
+
+        List<ArrearsListBean.DataBean.DetailListBean> list = model.getDetailList();
+        if (TextUtils.isEmpty(payType)) {
+            ToastUtils.showShort("请选择支付类型");
+            return;
+        }
+        for (int j = 0; j < list.size(); j++) {
+            for (int i = 0; i < list.get(j).getTypeList().size(); i++) {
+                FeeInfoBean feeInfoBean = new FeeInfoBean();
+                feeInfoBean.setProjectName(list.get(j).getTypeList().get(i).getChargeName());
+                feeInfoBean.setTotalAmount(list.get(j).getTypeList().get(i).getTotalAmount());
+                feeInfoBean.setThisAmount(list.get(j).getTypeList().get(i).getThisAmount());
+                feeInfoBean.setChargeId(list.get(j).getTypeList().get(i).getChargeId());
+                if (!TextUtils.isEmpty(list.get(j).getMouth())) {
+                    if (list.get(j).getMouth().length() > 6) {
+                        if (TextUtils.equals(list.get(j).getMouth().substring(5, 6), "0")) {
+                            feeInfoBean.setMonth(list.get(j).getMouth().substring(6, 7));
+                        } else {
+                            feeInfoBean.setMonth(list.get(j).getMouth().substring(5, 7));
+                        }
+                    }
+                }
+                feeInfoBeanList.add(feeInfoBean);
+            }
+        }
+        List<PrestoredBean> yuncun = new ArrayList<>();
+        yuncun.add(new PrestoredBean("c1178e0f-0257-4121-91bc-a63700a7572b", "0.14"));
+        String feeInfo = GsonUtils.parseToJsons(yuncun);
+        Random random = new Random();
+
+        SortedMap<String, String> map = new TreeMap<>();
+
+        map.put("orderNum", "jkwy" + getDateToString(System.currentTimeMillis()) + random.nextInt(1000));
+        map.put("ucId", "");
+        map.put("openid", "");
+        map.put("reName", TextUtils.isEmpty(model.getOwnerName()) ? "" : model.getOwnerName());
+        map.put("rePhone", TextUtils.isEmpty(model.getOwnerPhone()) ? "" : model.getOwnerPhone());
+        map.put("ownerName", TextUtils.isEmpty(model.getOwnerName()) ? "" : model.getOwnerName());
+        map.put("ownerPhone", TextUtils.isEmpty(model.getOwnerPhone()) ? "" : model.getOwnerPhone());
+        map.put("houseType", TextUtils.isEmpty(model.getHouseType()) ? "" : model.getHouseType());
+        map.put("houseId", TextUtils.isEmpty(model.getHouseId()) ? "" : model.getHouseId());
+        map.put("houseNo", TextUtils.isEmpty(model.getHouseNo()) ? "" : model.getHouseNo());
+        map.put("projectId", TextUtils.isEmpty(model.getProjectId()) ? "" : model.getProjectId());
+        map.put("projectName", TextUtils.isEmpty(model.getProjectName()) ? "" : model.getProjectName());
+        map.put("address", TextUtils.isEmpty(model.getAdress()) ? "" : model.getAdress());
+        map.put("buildId", TextUtils.isEmpty(model.getBuildId()) ? "" : model.getBuildId());
+        map.put("buildName", TextUtils.isEmpty(model.getBuildName()) ? "" : model.getBuildName());
+        map.put("company", TextUtils.isEmpty(model.getCompany()) ? "" : model.getCompany());
+        map.put("totalMoney", TextUtils.isEmpty(model.getTotal()) ? "" : model.getTotal());
+        map.put("payType", payType);
+        map.put("operateTel", SharedPreferencesUtils.init(mContext).getString("user_name"));
+        map.put("operateName", SharedPreferencesUtils.init(mContext).getString("user_nick_name"));
+        map.put("feeInfo", feeInfo);
+        OkGo.post(UrlConfig.getBuilding() + "appController/addRecordPre")
+                .params(map)
+                .execute(new StringDialogCallback(mContext, "正在创建订单") {
+                    @Override
+                    public void onSuccess(String s, okhttp3.Call call, okhttp3.Response response) {
+                        try {
+                            Log.e("addRecordPay", s);
+                            JSONObject object = new JSONObject(s);
+                            if (!object.getString("errcode").equals("1")) {
+                                ToastUtils.showShort(object.getString("message"));
+                                return;
+                            }
+                            OrderNoBean housingResult = GsonUtils.parseFromJson(s, OrderNoBean.class);
+                            if (housingResult != null && housingResult.getErrcode().equals("1") && housingResult.getData() != null) {
+                                String tradeNo = housingResult.getData().getTradeNo();
+                                if (TextUtils.isEmpty(tradeNo)) {
+                                    ToastUtils.showShort("订单创建异常!");
+                                    return;
+                                }
+                                String totalMoney = TextUtils.isEmpty(model.getTotal()) ? "" : model.getTotal();
+                                String projectId = TextUtils.isEmpty(model.getProjectId()) ? "" : model.getProjectId();
+                                String projectName = TextUtils.isEmpty(model.getProjectName()) ? "" : model.getProjectName();
+                                float money = Float.valueOf(totalMoney);
+                                directPay(payType, money + "", projectId, projectName, tradeNo, totalMoney, "2");
                             } else {
                                 ToastUtils.showShort("订单创建失败");
                             }
@@ -190,7 +291,7 @@ public class ArrearsListPresent {
     }
 
 
-    private void directPay(String payType, final int money, String projectId, String projectName, String tradeNo, final String totalMoney) {
+    private void directPay(String payType, String money, String projectId, String projectName, String tradeNo, final String totalMoney, String type) {
 
         String channel;
         if (TextUtils.equals(payType, "1")) {
@@ -214,31 +315,43 @@ public class ArrearsListPresent {
          * &subject=大管家扫码缴费&timestamp=20181015151340&tradeNo=jkwy2018101515133935
 
          */
+        SortedMap<String, String> map = new TreeMap<>();
 
-        OkGo.post(AppKeyConfig.directPay + "Creditcard/nativePay")
-                .params("channel", channel)
-                .params("money", money)
-                .params("nonceStr", "daguanjia" + curTime)
-                .params("notifyUrl", AppKeyConfig.addRecordPay + "Wx/huiPayNotify")
-                .params("projectId", projectId)
-                .params("subject", TextUtils.equals("WX_NATIVE", channel) ? projectName + "-大管家微支付" : projectName + "-大管家支付宝")
-                .params("timestamp", curTime)
-                .params("tradeNo", tradeNo)
-                .params("sign", sign.toUpperCase())
-                .cacheMode(CacheMode.DEFAULT.NO_CACHE)
+        map.put("channel", channel);
+        map.put("money", money);
+        map.put("nonceStr", "daguanjia" + curTime);
+//        map.put("notifyUrl", AppKeyConfig.addRecordPay + "Wx/huiPayNotify");
+        map.put("projectId", projectId);
+        map.put("subject", TextUtils.equals("WX_NATIVE", channel) ? projectName + "-大管家微支付" : projectName + "-大管家支付宝");
+        map.put("timestamp", curTime);
+        map.put("tradeNo", tradeNo);
+        map.put("type", type);
+        String sing = sign.toUpperCase();
+
+
+        OkGo.post(UrlConfig.getBuilding() + "appController/nativePay")
+//                .params("channel", channel)
+//                .params("money", money)
+//                .params("nonceStr", "daguanjia" + curTime)
+//                .params("notifyUrl", AppKeyConfig.addRecordPay + "Wx/huiPayNotify")
+//                .params("projectId", projectId)
+//                .params("subject", TextUtils.equals("WX_NATIVE", channel) ? projectName + "-大管家微支付" : projectName + "-大管家支付宝")
+//                .params("timestamp", curTime)
+//                .params("tradeNo", tradeNo)
+                .params(map)
                 .execute(new StringDialogCallback(mContext, "二维码生成中") {
                     @Override
                     public void onSuccess(String s, okhttp3.Call call, okhttp3.Response response) {
                         try {
                             Log.e("nativePay", s);
                             JSONObject object = new JSONObject(s);
-                            if (object.getInt("code") != 200) {
+                            if (!object.getString("errcode").equals("1")) {
                                 ToastUtils.showShort(object.getString("message"));
                                 return;
                             }
                             TwoCodePayBean model = GsonUtils.parseFromJson(s, TwoCodePayBean.class);
                             if (model != null) {
-                                if (TextUtils.equals(model.getCode(), "200")) {
+                                if (TextUtils.equals(model.getErrcode(), "1")) {
                                     if (model.getData() != null) {
                                         if (!TextUtils.isEmpty(model.getData().getCode_url())) {
                                             mView.OnCodeUrl(model.getData(), totalMoney);
@@ -276,21 +389,27 @@ public class ArrearsListPresent {
      * @param houseId      {"errcode":"200","errmsg":"操作成功","pageInfo":"{\"currentPage\":1,\"order\":\"asc\",\"pageSize\":20,\"total\":9,\"totalPage\":1}","data":{}}
      */
     public void queryOrder(String out_trade_no, String hy_bill_no, String projectId, final String houseId) {
-        OkGo.post(AppKeyConfig.directPay + "Creditcard/queryOrder")
-                .params("tradeNo", out_trade_no)
-                .params("hyBillNo", hy_bill_no)
-                .params("projectId", projectId)
-                .cacheMode(CacheMode.DEFAULT.NO_CACHE)
+        SortedMap<String, String> map = new TreeMap<>();
+
+        map.put("tradeNo", out_trade_no);
+        map.put("hyBillNo", hy_bill_no);
+        map.put("projectId", projectId);
+        OkGo.post(UrlConfig.getBuilding() + "appController/queryOrder")
+//                .params("tradeNo", out_trade_no)
+//                .params("hyBillNo", hy_bill_no)
+//                .params("projectId", projectId)
+                .params(map)
+//                .cacheMode(CacheMode.DEFAULT.NO_CACHE)
                 .execute(new StringDialogCallback(mContext, "加载中,请稍后...") {
                     @Override
                     public void onSuccess(String s, okhttp3.Call call, okhttp3.Response response) {
                         try {
                             Log.e("queryOrder", s);
                             LackDetailBean model = GsonUtils.parseFromJson(s, LackDetailBean.class);
-                            if (model != null && TextUtils.equals(model.getCode(), "200")) {
+                            if (model != null && TextUtils.equals(model.getErrcode(), "1")) {
                                 successPay(houseId);
-                                if (!TextUtils.isEmpty(model.getMessage())) {
-                                    ToastUtils.showShort(model.getMessage());
+                                if (!TextUtils.isEmpty(model.getErrmsg())) {
+                                    ToastUtils.showShort(model.getErrcode());
                                 }
                             } else {
                                 ToastUtils.showShort("支付失败");

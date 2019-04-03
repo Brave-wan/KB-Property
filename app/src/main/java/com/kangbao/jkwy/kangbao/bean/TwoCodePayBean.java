@@ -2,15 +2,18 @@ package com.kangbao.jkwy.kangbao.bean;
 
 public class TwoCodePayBean {
 
+
     /**
-     * data : {"code_url":"weixin://wxpay/bizpayurl?pr=tSGOCIz","out_trade_no":"fdstd112123981127","hy_bill_no":"1810111022524728518475001967"}
-     * code : 200
-     * message : 大管家收款二维码生成成功
+     * data : {"code_url":"weixin://wxpay/bizpayurl?pr=LDdzDxq","out_trade_no":"jkwy20190403172016242","hy_bill_no":"1904031720776929518475001145"}
+     * pageInfo : {"currentPage":0,"order":"asc","pageSize":20,"total":0,"totalPage":0}
+     * errmsg : 成功
+     * errcode : 1
      */
 
     private DataBean data;
-    private String code;
-    private String message;
+    private String pageInfo;
+    private String errmsg;
+    private String errcode;
 
     public DataBean getData() {
         return data;
@@ -20,27 +23,35 @@ public class TwoCodePayBean {
         this.data = data;
     }
 
-    public String getCode() {
-        return code;
+    public String getPageInfo() {
+        return pageInfo;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setPageInfo(String pageInfo) {
+        this.pageInfo = pageInfo;
     }
 
-    public String getMessage() {
-        return message;
+    public String getErrmsg() {
+        return errmsg;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setErrmsg(String errmsg) {
+        this.errmsg = errmsg;
+    }
+
+    public String getErrcode() {
+        return errcode;
+    }
+
+    public void setErrcode(String errcode) {
+        this.errcode = errcode;
     }
 
     public static class DataBean {
         /**
-         * code_url : weixin://wxpay/bizpayurl?pr=tSGOCIz
-         * out_trade_no : fdstd112123981127
-         * hy_bill_no : 1810111022524728518475001967
+         * code_url : weixin://wxpay/bizpayurl?pr=LDdzDxq
+         * out_trade_no : jkwy20190403172016242
+         * hy_bill_no : 1904031720776929518475001145
          */
 
         private String code_url;

@@ -23,7 +23,7 @@ import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import java.util.logging.Level;
 
 public class MyApplication extends Application {
-    private int urlType = 2;//0 本地环境 1测试环境 2正式环境
+    private int urlType = 0;//0 本地环境 1测试环境 2正式环境
 
     @Override
     public void onCreate() {
