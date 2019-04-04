@@ -15,6 +15,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.kangbao.jkwy.kangbao.bean.ArrearsListBean;
 import com.kangbao.jkwy.kangbao.bean.BuildingListBean;
 import com.kangbao.jkwy.kangbao.bean.FeeInfoBean;
+import com.kangbao.jkwy.kangbao.bean.HouseListYuBean;
 import com.kangbao.jkwy.kangbao.bean.HousePayingBean;
 import com.kangbao.jkwy.kangbao.bean.HousingResult;
 import com.kangbao.jkwy.kangbao.bean.LackDetailBean;
@@ -38,6 +39,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -196,34 +198,11 @@ public class ArrearsListPresent {
      * @param payType 1,WX_NATIVE,ALI_QRCODE
      * @param model
      */
-    public void addRecordYu(final String payType, final ArrearsListBean.DataBean model) {
+    public void addRecordYu(final String payType, final HouseListYuBean.DataBean.ListDataBean model) {
 
-        List<ArrearsListBean.DataBean.DetailListBean> list = model.getDetailList();
-        if (TextUtils.isEmpty(payType)) {
-            ToastUtils.showShort("请选择支付类型");
-            return;
-        }
-        for (int j = 0; j < list.size(); j++) {
-            for (int i = 0; i < list.get(j).getTypeList().size(); i++) {
-                FeeInfoBean feeInfoBean = new FeeInfoBean();
-                feeInfoBean.setProjectName(list.get(j).getTypeList().get(i).getChargeName());
-                feeInfoBean.setTotalAmount(list.get(j).getTypeList().get(i).getTotalAmount());
-                feeInfoBean.setThisAmount(list.get(j).getTypeList().get(i).getThisAmount());
-                feeInfoBean.setChargeId(list.get(j).getTypeList().get(i).getChargeId());
-                if (!TextUtils.isEmpty(list.get(j).getMouth())) {
-                    if (list.get(j).getMouth().length() > 6) {
-                        if (TextUtils.equals(list.get(j).getMouth().substring(5, 6), "0")) {
-                            feeInfoBean.setMonth(list.get(j).getMouth().substring(6, 7));
-                        } else {
-                            feeInfoBean.setMonth(list.get(j).getMouth().substring(5, 7));
-                        }
-                    }
-                }
-                feeInfoBeanList.add(feeInfoBean);
-            }
-        }
+
         List<PrestoredBean> yuncun = new ArrayList<>();
-        yuncun.add(new PrestoredBean("c1178e0f-0257-4121-91bc-a63700a7572b", "0.14"));
+        yuncun.add(new PrestoredBean("c1178e0f-0257-4121-91bc-a63700a7572b", "0.01"));
         String feeInfo = GsonUtils.parseToJsons(yuncun);
         Random random = new Random();
 
@@ -241,11 +220,11 @@ public class ArrearsListPresent {
         map.put("houseNo", TextUtils.isEmpty(model.getHouseNo()) ? "" : model.getHouseNo());
         map.put("projectId", TextUtils.isEmpty(model.getProjectId()) ? "" : model.getProjectId());
         map.put("projectName", TextUtils.isEmpty(model.getProjectName()) ? "" : model.getProjectName());
-        map.put("address", TextUtils.isEmpty(model.getAdress()) ? "" : model.getAdress());
+        map.put("address", TextUtils.isEmpty(model.getAddress()) ? "" : model.getAddress());
         map.put("buildId", TextUtils.isEmpty(model.getBuildId()) ? "" : model.getBuildId());
         map.put("buildName", TextUtils.isEmpty(model.getBuildName()) ? "" : model.getBuildName());
         map.put("company", TextUtils.isEmpty(model.getCompany()) ? "" : model.getCompany());
-        map.put("totalMoney", TextUtils.isEmpty(model.getTotal()) ? "" : model.getTotal());
+        map.put("totalMoney", "0.01");
         map.put("payType", payType);
         map.put("operateTel", SharedPreferencesUtils.init(mContext).getString("user_name"));
         map.put("operateName", SharedPreferencesUtils.init(mContext).getString("user_nick_name"));
@@ -269,7 +248,7 @@ public class ArrearsListPresent {
                                     ToastUtils.showShort("订单创建异常!");
                                     return;
                                 }
-                                String totalMoney = TextUtils.isEmpty(model.getTotal()) ? "" : model.getTotal();
+                                String totalMoney ="0.01";
                                 String projectId = TextUtils.isEmpty(model.getProjectId()) ? "" : model.getProjectId();
                                 String projectName = TextUtils.isEmpty(model.getProjectName()) ? "" : model.getProjectName();
                                 float money = Float.valueOf(totalMoney);
@@ -291,7 +270,39 @@ public class ArrearsListPresent {
     }
 
 
-    private void directPay(String payType, String money, String projectId, String projectName, String tradeNo, final String totalMoney, String type) {
+    public void getHouseList(String ldId) {
+        Map<String, String> map = new HashMap<>();
+        map.put("buildId", ldId);
+        map.put("pageInfo", CommonlyUtils.pageInfo(1));
+        OkGo.post(UrlConfig.getBuilding() + "appController/queryHouseByBuildId")
+                .params(map)
+                .execute(new StringDialogCallback(mContext, "正在创建订单") {
+                    @Override
+                    public void onSuccess(String s, okhttp3.Call call, okhttp3.Response response) {
+                        try {
+                            Log.e("addRecordPay", s);
+                            HouseListYuBean housingResult = GsonUtils.parseFromJson(s, HouseListYuBean.class);
+                            if (housingResult.getErrcode().equals("1")) {
+                                if (housingResult.getData() != null && housingResult.getData().getListData().size() > 0) {
+                                    addRecordYu("2", housingResult.getData().getListData().get(0));
+                                }
+                            }
+
+                        } catch (Exception e) {
+                            Log.e("printStackTrace", "Exception: " + Log.getStackTraceString(e));
+                        }
+                    }
+
+                    @Override
+                    public void onError(okhttp3.Call call, okhttp3.Response response, Exception e) {
+                        super.onError(call, response, e);
+                        ToastUtils.showShort("网络错误");
+                    }
+                });
+    }
+
+
+    void directPay(String payType, String money, String projectId, String projectName, String tradeNo, final String totalMoney, String type) {
 
         String channel;
         if (TextUtils.equals(payType, "1")) {
@@ -395,11 +406,7 @@ public class ArrearsListPresent {
         map.put("hyBillNo", hy_bill_no);
         map.put("projectId", projectId);
         OkGo.post(UrlConfig.getBuilding() + "appController/queryOrder")
-//                .params("tradeNo", out_trade_no)
-//                .params("hyBillNo", hy_bill_no)
-//                .params("projectId", projectId)
                 .params(map)
-//                .cacheMode(CacheMode.DEFAULT.NO_CACHE)
                 .execute(new StringDialogCallback(mContext, "加载中,请稍后...") {
                     @Override
                     public void onSuccess(String s, okhttp3.Call call, okhttp3.Response response) {
